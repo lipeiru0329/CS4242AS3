@@ -15,3 +15,8 @@ Documents : Holds the documentation, papers to follow
 Include, Lib, Scripts : Files for the application virtualenv, please do not edit.
 
 Static : Website GUI files
+
+-----------------------------------------------------------------------------------------------------------------------
+
+*Note:
+Please do the normal python programming in Core folder, it will be integrated into the WebGUI once each function is done.
