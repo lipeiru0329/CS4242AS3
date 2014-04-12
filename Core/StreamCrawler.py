@@ -2,9 +2,7 @@ import twitter
 import csv
 import twitter__login
 import json, time, sys, os
-'''
-STREAM API Sample
-'''
+
 consumer_key = '2JRLM23QHyLyBABuqg4tqQ'
 consumer_secret = 'avpoP356DDKbHtTRiicjKBC01yXqfaI8QCgfZebmjA'
 access_token = '20692466-UHvKF9lGGyjhkyn1H5PX55nXdGbZsCmGOZo6Exaoy'
@@ -30,19 +28,30 @@ class StreamCrawler(object):
     def writeToFile(self, resultSet, aspect,keyword):
         if not os.path.isdir("data/"+aspect+"/"):
             os.mkdir("data/"+aspect+"/")
+        if not os.path.isdir("data/"+aspect+"/user/"):
+            os.mkdir("data/"+aspect+"/user/")
         fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
+        ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
         if os.path.isfile(fname):
             fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
-        f = open(fname,'w')
+            ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
         i = 0
+        outfile = open(fname, 'w')
+        uoutfile = open(ufname, 'a')
         for r in resultSet:
             i+=1
-            f.write(str(r)+"\n")
+            try:
+                json.dump(r, outfile)
+                outfile.write("\n")
+                json.dump(r['user']['id'], uoutfile)
+                uoutfile.write("\n")
+            except:
+                pass
             print i
-            if(i>200):
-                f.close()
+            if(i>1000):
+                outfile.close()
+                uoutfile.close()
                 return
-        f.close()
         return
     
     def startStreamCrawling(self):

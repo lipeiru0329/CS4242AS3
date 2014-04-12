@@ -33,17 +33,26 @@ class FixedKeywordCrawler(object):
     def writeToFile(self, resultSet, aspect,keyword):
         if not os.path.isdir("data/"+aspect+"/"):
             os.mkdir("data/"+aspect+"/")
+        if not os.path.isdir("data/"+aspect+"/user/"):
+            os.mkdir("data/"+aspect+"/user/")
         fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
+        ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
         if os.path.isfile(fname):
             fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
-        f = open(fname,'w')
+            ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
+        outfile = open(fname, 'w')
+        uoutfile = open(ufname, 'a')
         for r in resultSet:
-            f.write(str(r)+"\n")
-        f.close()
+            json.dump(r, outfile)
+            outfile.write("\n")
+            json.dump(r['user']['id'], uoutfile)
+            uoutfile.write("\n")
+        outfile.close()
+        uoutfile.close()
         return
     
     def searchSoccerTweets(self):
-        keywords = ['soccer', 'football']
+        keywords = ['soccer', 'football','S-League','EPL','ManU','Arsenal']
         for word in keywords:
             resultSet = self.searchAPI(word, 150)
             self.writeToFile(resultSet, 'soccer', word)
