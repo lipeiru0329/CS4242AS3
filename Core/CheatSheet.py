@@ -44,4 +44,15 @@ print list(set(t)) #[1, 2, 3, 5, 6, 7, 8]
 s = [1, 2, 3]
 print list(set(t) - set(s)) #[8, 5, 6, 7]
 
+'''
+move file
+'''
+firstFile = "./data/"+self.aspect+"/first.txt"
+destOfDoneList = "./data/"+self.aspect+"/donelist/"
+shutil.move(firstFile,destOfDoneList)
 
+
+'''
+clone list
+'''
+combinedTitleAndDescList = titleList[:]

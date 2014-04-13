@@ -22,10 +22,6 @@ class FixedKeywordCrawler(object):
         self.twitter_rest = twitter__login.login()
         self.twitter_stream = twitter.TwitterStream(auth=twitter.oauth.OAuth(access_token, access_token_secret,consumer_key, consumer_secret))
     
-    def streamAPI(self, keywords, aspect):
-        resultSet = self.twitter_stream.statuses.filter(track = keywords, locations = g_locations, language = g_language)
-        return resultSet
-    
     def searchAPI(self, keywords, expectedNumberofResults):
         resultSet = self.twitter_rest.search.tweets(q=keywords, geocode = g_geocode, count = expectedNumberofResults, language = g_language)
         return resultSet['statuses']
@@ -37,22 +33,26 @@ class FixedKeywordCrawler(object):
             os.mkdir("data/"+aspect+"/user/")
         fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
         ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
-        if os.path.isfile(fname):
-            fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
-            ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
+        #if os.path.isfile(fname):
+         #   fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
+          #  ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
         outfile = open(fname, 'w')
-        uoutfile = open(ufname, 'a')
+        uoutfile = open(ufname, 'w')
         for r in resultSet:
-            json.dump(r, outfile)
-            outfile.write("\n")
-            json.dump(r['user']['id'], uoutfile)
-            uoutfile.write("\n")
+            if r["metadata"]["iso_language_code"] == "en" and r["user"]["listed_count"] > 3:
+                json.dump(r, outfile)
+                outfile.write("\n")
+                json.dump(r['user']['id'], uoutfile)
+                uoutfile.write("\n")
         outfile.close()
         uoutfile.close()
         return
     
     def searchSoccerTweets(self):
-        keywords = ['soccer', 'football','Crystal Palace','EPL','Aston Villa','Fulham', 'Norwich City', 'Southampton', 'Cardiff City', 'Stoke City', 'Newcastle United', 'Sunderland', 'Everton', 'West Bromwich Albion', 'Tottenham Hotspur']
+        keywords = ['soccer', 'football','Crystal Palace','EPL', 'goal', 'SLeague', 'PREMIER LEAGUE'
+                    'Norwich City', 'Southampton', 'Cardiff City', 'Stoke City', 'Newcastle United',
+                    'Sunderland', 'Everton', 'West Bromwich Albion', 'Tottenham Hotspur',
+                    'Liverpool', 'Chelsea', 'Manchester City', 'Man City', 'Everton', 'Arsenal', 'Tottenham', 'ManU', 'Manchester United', 'Southampton', 'Newcastle United', 'Newcastle ' ,'Stoke City', 'West Ham', 'Hull City', 'Swansea City', 'Fulham', 'Cardiff City', 'Sunderland']
         for word in keywords:
             resultSet = self.searchAPI(word, 150)
             self.writeToFile(resultSet, 'soccer', word)

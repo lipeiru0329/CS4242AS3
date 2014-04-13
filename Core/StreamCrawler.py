@@ -10,7 +10,7 @@ access_token_secret = 'FXEAFtjBvT9hRLxgPubBRUiv8sR7GTSpmVYoW9UArGLOi'
   
 g_locations = "103.6271, 1.2427, 103.9993, 1.4548" #singapore 
 g_language = "en"
-g_geocode="1.3520830,103.8198360,100km"  #singapore radius
+g_geocode="1.3520830,103.8198360,80km"  #singapore radius
 
 class StreamCrawler(object):
     def __init__(self):
@@ -19,6 +19,8 @@ class StreamCrawler(object):
         self.output  = None
         self.twitter_rest = twitter__login.login()
         self.twitter_stream = twitter.TwitterStream(auth=twitter.oauth.OAuth(access_token, access_token_secret,consumer_key, consumer_secret))
+        self.fname = None
+        self.ufname = None
     
     def streamAPI(self):
         # By location only.
@@ -30,27 +32,35 @@ class StreamCrawler(object):
             os.mkdir("data/"+aspect+"/")
         if not os.path.isdir("data/"+aspect+"/user/"):
             os.mkdir("data/"+aspect+"/user/")
-        fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
-        ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
-        if os.path.isfile(fname):
-            fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
-            ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
+        self.fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
+        self.ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
         i = 0
-        outfile = open(fname, 'w')
-        uoutfile = open(ufname, 'a')
+        j = 0
+        outfile = open(self.fname, 'w')
+        uoutfile = open(self.ufname, 'a')
         for r in resultSet:
             i+=1
+            j+=1
             try:
-                json.dump(r, outfile)
-                outfile.write("\n")
-                json.dump(r['user']['id'], uoutfile)
-                uoutfile.write("\n")
-            except:
+                if len(r)>0 and r["place"]["country"]== "Singapore" and r["user"]["listed_count"] > 3: #strict filter
+                    json.dump(r, outfile)
+                    outfile.write("\n")
+                    json.dump(r['user']['id'], uoutfile)
+                    uoutfile.write("\n")
+            except Exception as inst:
+                print inst
                 pass
             print i
             if(i>1000):
                 outfile.close()
                 uoutfile.close()
+                self.fname = "data/"+aspect+"/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".json"
+                self.ufname = "data/"+aspect+"/user/"+keyword+"-"+time.strftime('%Y%m%d-%H%M%S')+".txt"
+                outfile = open(self.fname, 'w')
+                uoutfile = open(self.ufname, 'a')
+                i = 0
+                continue
+            if (j>5000):
                 return
         return
     
