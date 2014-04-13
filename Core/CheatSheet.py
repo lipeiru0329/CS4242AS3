@@ -24,8 +24,6 @@ encoding decoding
 loads("stringhere")
 load(filestream)
 dumps  : you want to write to a file or network stream
-
-
 '''
 data = [ { 'a':'A', 'b':(2, 4), 'c':3.0 } ]
 data_string = json.dumps(data)
@@ -36,5 +34,14 @@ print 'ORIGINAL:', type(data[0]['b']) #ORIGINAL: <type 'tuple'>
 print 'DECODED :', type(decoded[0]['b']) #DECODED : <type 'list'>
 
 
+
+'''
+Remove Duplicates
+'''
+t = [1, 2, 3, 1, 2, 5, 6, 7, 8]
+print t #[1, 2, 3, 1, 2, 5, 6, 7, 8]
+print list(set(t)) #[1, 2, 3, 5, 6, 7, 8]
+s = [1, 2, 3]
+print list(set(t) - set(s)) #[8, 5, 6, 7]
 
 

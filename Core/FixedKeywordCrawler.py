@@ -27,7 +27,7 @@ class FixedKeywordCrawler(object):
         return resultSet
     
     def searchAPI(self, keywords, expectedNumberofResults):
-        resultSet = self.twitter_rest.search.tweets(q=keywords, geocode = g_geocode, count = expectedNumberofResults)
+        resultSet = self.twitter_rest.search.tweets(q=keywords, geocode = g_geocode, count = expectedNumberofResults, language = g_language)
         return resultSet['statuses']
     
     def writeToFile(self, resultSet, aspect,keyword):
@@ -52,7 +52,7 @@ class FixedKeywordCrawler(object):
         return
     
     def searchSoccerTweets(self):
-        keywords = ['soccer', 'football','S-League','EPL','ManU','Arsenal']
+        keywords = ['soccer', 'football','Crystal Palace','EPL','Aston Villa','Fulham', 'Norwich City', 'Southampton', 'Cardiff City', 'Stoke City', 'Newcastle United', 'Sunderland', 'Everton', 'West Bromwich Albion', 'Tottenham Hotspur']
         for word in keywords:
             resultSet = self.searchAPI(word, 150)
             self.writeToFile(resultSet, 'soccer', word)
@@ -73,12 +73,12 @@ class FixedKeywordCrawler(object):
         return True    
     
     def startBasicCrawling(self):
-        self.searchF1Tweets()
-        print "searching F1 Done.."
+        #self.searchF1Tweets()
+        #print "searching F1 Done.."
         self.searchSoccerTweets()
         print "searching soccer done.."
-        self.searchBasketballTweets()
-        print "searching basketball Done.."
+        #self.searchBasketballTweets()
+        #print "searching basketball Done.."
         return
     
 c = FixedKeywordCrawler()
