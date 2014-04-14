@@ -40,9 +40,9 @@ class ExpertIndexer():
             #RemovedCloseWordsList = self.u.EditDistanceWordsRemover(POSProcessedList)
             # dic format = userid->processed title + desc
             if self.topicDictionary.has_key(meta[0]):
-                (self.topicDictionary[meta[0]]).extend(POSProcessedList) 
+                (self.topicDictionary[meta[0]]).extend(POSProcessedList)
             else:
-                self.topicDictionary[meta[0]] = POSProcessedList[:]        
+                self.topicDictionary[meta[0]] = POSProcessedList[:]
         return
     
     '''
@@ -52,7 +52,8 @@ class ExpertIndexer():
         '''
             We need to converte topicDictionary to InvertedIndex
         '''
-        invertedIndexDict = {}   
+        invertedIndexDict = {}
+        
         for key in self.topicDictionary:
             c = collections.Counter(self.topicDictionary[key])
             for term in self.topicDictionary[key]:
@@ -70,13 +71,22 @@ class ExpertIndexer():
         idxf = open(indexFilename,'w')    
         postingFilename = "./dict/"+self.aspect+"/postings-"+timef+".txt"
         idxp = open(postingFilename,'w')
-        
-        for key in invertedIndexDict:
-            idxf.write(key.encode('utf-8')+"\n")
+        line = 1
+        for key in invertedIndexDict: # {terms: [(userid,tf),]}
             l = []
-            for i in invertedIndexDict[key]:
-                l.append(str(i[0])+" "+ str(i[1]))
+            uf = 0
+            userFrequencyDict = {}
+            for i in invertedIndexDict[key]: # for this topic term..
+                if userFrequencyDict.has_key(i[0]): # already has same userid
+                    userFrequencyDict[i[0]] = userFrequencyDict[i[0]] + i[1] #add tgt the term freq
+                else:
+                    uf=+1
+                    userFrequencyDict[i[0]] = i[1]
+            for k in userFrequencyDict:
+                l.append(str(k)+" "+ str(userFrequencyDict[k]))
             idxp.write(" ".join(l)+"\n")
+            idxf.write(key.encode('utf-8')+ " "+ str(uf)+" "+ str(line)+"\n") #index file
+            line+=1
         idxf.close()
         idxp.close()
         return
